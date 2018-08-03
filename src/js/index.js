@@ -40,28 +40,5 @@ database.ref().child('messages').on('child_added', function (dataSnapshot) {
 store.subscribe(() => {
     console.log(store.getState());
     console.log('in subscribe method');
-
-    // const paraElement = document.createElement('p');
-    // paraElement.innerHTML = `<strong>${store.getState()[0].sentBy}</strong> - ${store.getState()[0].date}<br>
-    //                             ${store.getState()[0].messageText}`;
-    // document.getElementById('messageHistory').appendChild(paraElement);
+ 
 });
-
- // function writeUserData(userId, name, email, imageUrl) {
- //     // to Write the data
- //     firebase.database().ref('users/' + userId).set({
- //         username: name,
- //         email: email,
- //         profile_picture: imageUrl
- //     });
- // }
-
- //read the data
- // database.ref('/users/' + 2).once('value', (snapshot) => {
- //     const { username, email, profile_picture } = snapshot.val();
- //     //console.log("User", snapshot.val());
- //     console.log(username);
-
- //     console.log(`user object ${username}, ${email}, ${profile_picture}`);
- // })
-// writeUserData("2", "Prathap", "prathap@gmail.com", "https://myimage1.png");
