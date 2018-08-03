@@ -81,5 +81,6 @@ module.exports = {
     devServer: {
         port: 3002
     },
-    watch: true
+    watch: true, 
+    mode: 'development'
 };

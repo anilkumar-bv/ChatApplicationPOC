@@ -1,6 +1,7 @@
 import { createStore } from 'redux'
 import { chat } from './reducers'
 import { addChatToStore } from './actions'
+var markdown = require("markdown").markdown;
 
 const store = createStore(chat)
 
@@ -9,16 +10,22 @@ console.log(store.getState())
 
 // get Elements
 const btnSubmit = document.getElementById('submit');
-var ref = firebase.database().ref().child('messages');
+var ref = firebase.database().ref().child('messages').limitToLast(5);
 
 // Get a reference to the database service
 var database = firebase.database();
 
 btnSubmit.addEventListener('click', evt => {
-    const message = document.querySelector('#messageInput').value;
+    const rawMessage = document.querySelector('#messageInput').value;
+    //document.getElementById('messageInput').innerHTML = 'xxx';
+    const message = markdown.toHTML(rawMessage);
     const currentDateTime = Date.now();
-    //const id = (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase();
     let userDisplayName = 'Anil Kumar';
+    var currentUser = firebase.auth().currentUser;
+    if (currentUser) {
+        userDisplayName = currentUser.displayName;
+    }
+
     firebase.database().ref('messages').push({
         messageText: message,
         date: currentDateTime,
@@ -29,7 +36,7 @@ btnSubmit.addEventListener('click', evt => {
     store.dispatch(addChatToStore(message, currentDateTime, userDisplayName));
 });
 
-database.ref().child('messages').on('child_added', function (dataSnapshot) {
+ref.on('child_added', function (dataSnapshot) {
     console.log("DataSnapshot", dataSnapshot.val());
     const paraElement = document.createElement('p');
     paraElement.innerHTML = `<strong>${dataSnapshot.val().sentBy}</strong> - ${dataSnapshot.val().date}<br>
@@ -37,8 +44,22 @@ database.ref().child('messages').on('child_added', function (dataSnapshot) {
     document.getElementById('messageHistory').appendChild(paraElement);
 })
 
+// get the Initial data from the Chat
+database.ref().child('messages').once('value', dataSnapshot => {
+    let state = [];
+    dataSnapshot.forEach(childSnapshot => {
+        let chatInstance = {};
+        chatInstance.messageText = childSnapshot.val().messageText;
+        chatInstance.date = childSnapshot.val().date;
+        chatInstance.sentBy = childSnapshot.val().sentBy;
+        state.push(chatInstance);
+    });
+
+    console.log(state);
+});
+
 store.subscribe(() => {
     console.log(store.getState());
     console.log('in subscribe method');
- 
+
 });
