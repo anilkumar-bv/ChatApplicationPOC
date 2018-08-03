@@ -1,0 +1,11 @@
+.displayLeft {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    height: 200px;
+    background-color: lightpink;
+}
+
+.hide {
+    display: none
+}
